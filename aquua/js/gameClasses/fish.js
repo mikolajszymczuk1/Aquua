@@ -1,36 +1,48 @@
 import { randomNumber } from "../utilities/helpers";
 
 class Fish {
-    constructor(context, posX, posY, radius) {
+    constructor(context, posX, posY, radius, color) {
         this.c = context;
         this.posX = posX;
         this.posY = posY;
         this.r = radius;
-        this.followPointX = 0;
-        this.followPointY = 0;
-        this.createFollowPoint();
+        this.color = color;
+        this.escape = false;
+
+        // Create first point after fish is created
+        this.followPoint = this.createFollowPoint();
     }
 
     draw() {
         this.c.beginPath();
         this.c.arc(this.posX, this.posY, this.r, 0, 2 * Math.PI);
+        this.c.fillStyle = this.color;
         this.c.fill();
     }
 
     update() {
-        let dx = (this.followPointX - this.posX) * .125;
-        let dy = (this.followPointY - this.posY) * .125;
+        let dx = (this.followPoint.x - this.posX) * .125;
+        let dy = (this.followPoint.y - this.posY) * .125;
         let distance = Math.sqrt((dx * dx) + (dy * dy));
 
         if (distance > 2) {
-            dx *= 2 / distance;
-            dy *= 2 / distance
+            if (!this.escape) {
+                dx *= 1.5 / distance;
+                dy *= 1.5 / distance;
+            } else {
+                dx += 0.1;
+                dy += 0.1;
+            }
         } else {
-            this.createFollowPoint();
+            this.followPoint = this.createFollowPoint();
         }
 
         this.posX += dx;
         this.posY += dy;
+    }
+
+    setNewFollowPoint(newFollowX, newFollowY) {
+        this.followPoint = { x: newFollowX, y: newFollowY };
     }
 
     createFollowPoint() {
@@ -44,8 +56,15 @@ class Fish {
         if (fishAreaPointB.x > this.c.canvas.width) fishAreaPointB.x = this.c.canvas.width;
         if (fishAreaPointB.y > this.c.canvas.height) fishAreaPointB.y = this.c.canvas.height;
 
-        this.followPointX = randomNumber(fishAreaPointA.x, fishAreaPointB.x);
-        this.followPointY = randomNumber(fishAreaPointA.y, fishAreaPointB.y);
+        return {
+            x: randomNumber(fishAreaPointA.x, fishAreaPointB.x),
+            y: randomNumber(fishAreaPointA.y, fishAreaPointB.y)
+        }
+    }
+
+    confusion(howLong) {
+        this.escape = true;
+        setTimeout(() => { this.escape = false }, howLong);
     }
 }
 
