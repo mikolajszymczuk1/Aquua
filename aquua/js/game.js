@@ -18,6 +18,7 @@ const gameConfig = {
 // Window setup
 game.width = gameConfig.windowSize.width;
 game.height = gameConfig.windowSize.height;
+game.style.backgroundColor = "#0d47a1";
 
 // Fishes objects
 let fishes = [];
@@ -26,7 +27,7 @@ let fishes = [];
 let foods = [];
 
 // Fishes colors
-const colors = ["red", "blue", "green", "black"];
+const colors = ["#e3f2fd", "#bbdefb", "#2196f3", "#42a5f5"];
 
 // Events
 game.addEventListener("mousedown", (e) => {
@@ -49,6 +50,20 @@ game.addEventListener("mousedown", (e) => {
         foods.push(new Food(ctx, mousePos.x, mousePos.y, 5));
     }
 });
+
+game.addEventListener("mousemove", (e) => {
+    let rect = game.getBoundingClientRect();
+    let mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+
+    // When move cursor on fish, show fish hunger status bar
+    fishes.forEach((fish) => {
+        if (mousePos.x <= fish.posX + fish.r && mousePos.x >= fish.posX - fish.r &&
+            mousePos.y <= fish.posY + fish.r && mousePos.y >= fish.posY - fish.r) {
+            fish.showInfo = true;
+            setTimeout(() => { fish.showInfo = false; }, 500);
+        }
+    });
+}); 
 
 // Init function to create objects when game start
 function init() {
