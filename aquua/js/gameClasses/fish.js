@@ -8,6 +8,7 @@ class Fish {
         this.r = radius;
         this.color = color;
         this.escape = false;
+        this.hasFoodTarget = false;
 
         // Create first point after fish is created
         this.followPoint = this.createFollowPoint();
@@ -35,6 +36,7 @@ class Fish {
             }
         } else {
             this.followPoint = this.createFollowPoint();
+            this.hasFoodTarget = false;
         }
 
         this.posX += dx;
@@ -65,6 +67,27 @@ class Fish {
     confusion(howLong) {
         this.escape = true;
         setTimeout(() => { this.escape = false }, howLong);
+    }
+
+    catchFood(foodsArray) {
+        foodsArray.forEach((food) => {
+            // When food is near the fish will start chasing the food
+            if (!this.hasFoodTarget) {
+                let eatOffset = 100;
+                if (food.posX > (this.posX - eatOffset) && food.posX < (this.posX + eatOffset) &&
+                    food.posY > (this.posY - eatOffset) && food.posY < (this.posY + eatOffset)) {
+                    this.hasFoodTarget = true;
+                    this.setNewFollowPoint(food.posX, food.posY);
+                }
+            }
+
+            // When colide with food, destroy food
+            if (food.posX > (this.posX - this.r) && food.posX < (this.posX + this.r) &&
+                food.posY > (this.posY - this.r) && food.posY < (this.posY + this.r)) {
+                food.isEaten = true;
+                this.hasFoodTarget = false;
+            }
+        });
     }
 }
 
