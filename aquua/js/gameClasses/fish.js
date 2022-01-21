@@ -2,11 +2,18 @@ import { randomNumber } from "../utilities/helpers";
 
 class Fish {
     constructor(context, posX, posY, radius, color) {
+        // Canvas context
         this.c = context;
+
+        // Fish position
         this.posX = posX;
         this.posY = posY;
+
+        // Fish appearance
         this.r = radius;
         this.color = color;
+        
+        // States
         this.escape = false;
         this.hasFoodTarget = false;
         this.showInfo = false;
