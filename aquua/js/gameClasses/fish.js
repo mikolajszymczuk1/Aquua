@@ -1,7 +1,7 @@
 import { randomNumber } from "../utilities/helpers";
 
 class Fish {
-    constructor(context, posX, posY, radius, color) {
+    constructor(context, posX, posY, width, height, color) {
         // Canvas context
         this.c = context;
 
@@ -10,7 +10,8 @@ class Fish {
         this.posY = posY;
 
         // Fish appearance
-        this.r = radius;
+        this.width = width;
+        this.height = height;
         this.color = color;
         
         // States
@@ -27,10 +28,16 @@ class Fish {
     }
 
     draw() {
+        // Draw fish object (Rect)
+        let rotateAngle = Math.atan2(this.followPoint.y - this.posY, this.followPoint.x - this.posX);
+        this.c.save();
+        this.c.translate(this.posX, this.posY);
+        this.c.rotate(rotateAngle);
         this.c.beginPath();
-        this.c.arc(this.posX, this.posY, this.r, 0, 2 * Math.PI);
         this.c.fillStyle = this.color;
-        this.c.fill();
+        this.c.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        this.c.translate(-this.posX, -this.posY);
+        this.c.restore();
 
         // Draw hunger bar
         if (this.showInfo) {
@@ -45,7 +52,6 @@ class Fish {
             let barValue = parseInt((this.hungerState / this.maxHungerState) * 100);
             this.c.fillStyle = "white";
             this.c.fillRect(this.posX - 15, this.posY - 25, (barValue * barWidth) / 100, 5);
-            this.c.stroke();
         }
     }
 
@@ -111,8 +117,8 @@ class Fish {
                 }
     
                 // When colide with food, destroy food
-                if (food.posX > (this.posX - this.r) && food.posX < (this.posX + this.r) &&
-                    food.posY > (this.posY - this.r) && food.posY < (this.posY + this.r)) {
+                if (food.posX > this.posX - (this.width / 2) && food.posX < this.posX + (this.width / 2) &&
+                    food.posY > this.posY - (this.height / 2) && food.posY < this.posY + (this.height / 2)) {
                     food.isEaten = true;
                     this.hasFoodTarget = false;
                     this.hungerState += 5;

@@ -5,8 +5,6 @@ import { randomNumber } from "./utilities/helpers";
 const game = document.getElementById("game");
 const ctx = game.getContext("2d");
 
-game.addEventListener("contextmenu", (e) => { e.preventDefault() });
-
 // Config
 const gameConfig = {
     windowSize: {
@@ -16,6 +14,7 @@ const gameConfig = {
 }
 
 // Window setup
+game.addEventListener("contextmenu", (e) => { e.preventDefault() });
 game.width = gameConfig.windowSize.width;
 game.height = gameConfig.windowSize.height;
 game.style.backgroundColor = "#0d47a1";
@@ -26,9 +25,6 @@ let fishes = [];
 // Foods
 let foods = [];
 
-// Fishes colors
-const colors = ["#e3f2fd", "#bbdefb", "#2196f3", "#42a5f5"];
-
 // Events
 game.addEventListener("mousedown", (e) => {
     let rect = game.getBoundingClientRect();
@@ -37,8 +33,8 @@ game.addEventListener("mousedown", (e) => {
     // When click fish, fish get confused
     if (e.button === 0) {
         fishes.forEach((fish) => {
-            if (mousePos.x <= fish.posX + fish.r && mousePos.x >= fish.posX - fish.r &&
-                mousePos.y <= fish.posY + fish.r && mousePos.y >= fish.posY - fish.r) {
+            if (mousePos.x <= fish.posX + (fish.width / 2) && mousePos.x >= fish.posX - (fish.width / 2) &&
+                mousePos.y <= fish.posY + (fish.height / 2) && mousePos.y >= fish.posY - (fish.width / 2)) {
                 fish.setNewFollowPoint(mousePos.x, mousePos.y);
                 fish.confusion(2000);
             }
@@ -57,8 +53,8 @@ game.addEventListener("mousemove", (e) => {
 
     // When move cursor on fish, show fish hunger status bar
     fishes.forEach((fish) => {
-        if (mousePos.x <= fish.posX + fish.r && mousePos.x >= fish.posX - fish.r &&
-            mousePos.y <= fish.posY + fish.r && mousePos.y >= fish.posY - fish.r) {
+        if (mousePos.x <= fish.posX + (fish.width / 2) && mousePos.x >= fish.posX - (fish.width / 2) &&
+            mousePos.y <= fish.posY + (fish.height / 2) && mousePos.y >= fish.posY - (fish.height / 2)) {
             fish.showInfo = true;
             setTimeout(() => { fish.showInfo = false; }, 500);
         }
@@ -71,10 +67,10 @@ function init() {
     for (let i = 0; i < 20; i++) {
         fishes.push(new Fish(
             ctx,
-            randomNumber(0, ctx.canvas.width - 15),
-            randomNumber(0, ctx.canvas.height - 15),
-            15,
-            colors[randomNumber(0, colors.length - 1)]
+            randomNumber(10, ctx.canvas.width - 10),
+            randomNumber(10, ctx.canvas.height - 10),
+            20, 20,
+            "white"
         ));
     }
 }
